@@ -31,16 +31,22 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+
+        print(f"Login tentando com usuário: {username}")  # Log para depuração
         
         try:
-            # Verifica no banco de dados
             user = mongo.db.usuarios.find_one({'username': username})
-            if user and check_password_hash(user['password'], password):  # Verifica o hash da senha
-                return redirect(url_for('inicio'))  # Redireciona para a página inicial após login
+            if user is None:
+                return "Usuário não encontrado", 404
+
+            if check_password_hash(user['password'], password):
+                return redirect(url_for('inicio'))
             else:
                 return "Usuário ou senha inválidos", 401
+        
         except Exception as e:
-            return f"Erro ao acessar o banco de dados: {e}", 500
+            print(f"Erro no login: {str(e)}")  # Log do erro
+            return f"Erro ao acessar o banco de dados: {str(e)}", 500
 
     return render_template('login.html')
 
