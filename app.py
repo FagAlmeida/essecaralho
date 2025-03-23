@@ -26,7 +26,7 @@ def inicio():
     return render_template('inicio.html')
 
 # Página de login
-@app.route('/Login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
