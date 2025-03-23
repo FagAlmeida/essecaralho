@@ -26,7 +26,7 @@ def inicio():
     return render_template('inicio.html')
 
 # Página de login
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/Login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -48,7 +48,7 @@ def login():
             print(f"Erro no login: {str(e)}")  # Log do erro
             return f"Erro ao acessar o banco de dados: {str(e)}", 500
 
-    return render_template('login.html')
+    return render_template('Login.html')
 
 # Página de registro
 @app.route('/registro', methods=['GET', 'POST'])
