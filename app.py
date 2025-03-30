@@ -26,44 +26,45 @@ def inicio():
     return render_template('inicio.html')
 
 # Página de login
-@app.route('/login', methods=['GET', 'POST'])
+app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username')
+        password = request.form.get('password')
 
         print(f"Tentando login com usuário: {username}")  # Log para depuração
 
         try:
             # Verifica se a conexão com o banco de dados foi bem-sucedida
-            if not db:
+            if 'db' not in globals() or db is None:
                 raise Exception("Banco de dados não conectado.")
             
             print("Conexão com o MongoDB está ativa.")  # Log para depuração
 
             # Procura o usuário no banco de dados MongoDB
             user = db.usuarios.find_one({'username': username})
-            if user is None:
+            if not user:
                 flash("Usuário não encontrado", 'error')  # Mensagem de erro com flash
-                return render_template('Login.html')
+                return render_template('login.html')
 
             print(f"Usuário encontrado: {user}")  # Log para depuração
 
             # Verifica se a senha corresponde ao hash armazenado
-            if check_password_hash(user['password'], password):
+            if check_password_hash(user.get('password', ''), password):
                 flash("Login bem-sucedido", 'success')  # Mensagem de sucesso com flash
                 return redirect(url_for('inicio'))  # Redireciona para a página inicial
             else:
                 flash("Usuário ou senha inválidos", 'error')  # Mensagem de erro com flash
-                return render_template('Login.html')
+                return render_template('login.html')
 
         except Exception as e:
             print(f"Erro no login: {str(e)}")  # Log do erro
             flash(f"Erro ao acessar o banco de dados: {str(e)}", 'error')
-            return render_template('Login.html')
+            return render_template('login.html')
 
     # Para a requisição GET, exibe o formulário de login
-    return render_template('Login.html')
+    return render_template('login.html')
+
 # Página de registro
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
