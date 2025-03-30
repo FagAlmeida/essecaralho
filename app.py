@@ -33,13 +33,21 @@ def login():
         password = request.form['password']
 
         print(f"Tentando login com usuário: {username}")  # Log para depuração
-        
+
         try:
+            # Verifica se a conexão com o banco de dados foi bem-sucedida
+            if not db:
+                raise Exception("Banco de dados não conectado.")
+            
+            print("Conexão com o MongoDB está ativa.")  # Log para depuração
+
             # Procura o usuário no banco de dados MongoDB
-            user = mongo.db.usuarios.find_one({'username': username})
+            user = db.usuarios.find_one({'username': username})
             if user is None:
                 flash("Usuário não encontrado", 'error')  # Mensagem de erro com flash
                 return render_template('Login.html')
+
+            print(f"Usuário encontrado: {user}")  # Log para depuração
 
             # Verifica se a senha corresponde ao hash armazenado
             if check_password_hash(user['password'], password):
@@ -56,7 +64,6 @@ def login():
 
     # Para a requisição GET, exibe o formulário de login
     return render_template('Login.html')
-
 # Página de registro
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
