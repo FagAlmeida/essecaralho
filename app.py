@@ -91,6 +91,4 @@ def registro():
 
 
 if __name__ == '__main__':
-    # Cria a coleção 'usuarios' antes de iniciar o servidor
-    create_collections()
-    app.run(debug=True, port=5001)
+    app.run(debug=True)
