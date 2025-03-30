@@ -32,22 +32,29 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        print(f"Login tentando com usuário: {username}")  # Log para depuração
+        print(f"Tentando login com usuário: {username}")  # Log para depuração
         
         try:
+            # Procura o usuário no banco de dados MongoDB
             user = mongo.db.usuarios.find_one({'username': username})
             if user is None:
-                return "Usuário não encontrado", 404
+                flash("Usuário não encontrado", 'error')  # Mensagem de erro com flash
+                return render_template('Login.html')
 
+            # Verifica se a senha corresponde ao hash armazenado
             if check_password_hash(user['password'], password):
-                return redirect(url_for('inicio'))
+                flash("Login bem-sucedido", 'success')  # Mensagem de sucesso com flash
+                return redirect(url_for('inicio'))  # Redireciona para a página inicial
             else:
-                return "Usuário ou senha inválidos", 401
-        
+                flash("Usuário ou senha inválidos", 'error')  # Mensagem de erro com flash
+                return render_template('Login.html')
+
         except Exception as e:
             print(f"Erro no login: {str(e)}")  # Log do erro
-            return f"Erro ao acessar o banco de dados: {str(e)}", 500
+            flash(f"Erro ao acessar o banco de dados: {str(e)}", 'error')
+            return render_template('Login.html')
 
+    # Para a requisição GET, exibe o formulário de login
     return render_template('Login.html')
 
 # Página de registro
